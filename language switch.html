@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Language Switch</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #e8f4f1;
+      margin: 0;
+    }
+
+    .container {
+      background-color:white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      text-align: center;
+      width: 350px;
+    }
+
+    .globe-icon {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #e8f4f1;
+    }
+
+    h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .custom-dropdown {
+      position: relative;
+      margin-bottom: 25px;
+    }
+
+    .dropdown-toggle {
+      padding: 12px 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 250px;
+      background-color: white;
+      font-size: 16px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .language-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 250px;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: none;
+      z-index: 10;
+    }
+
+    .language-list.open {
+      display: block;
+    }
+
+    .language-list li {
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .language-list li:hover {
+      background-color: #e0eee0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="globe-icon">🌐</div>
+    <h2>Language Switch</h2>
+    <div class="custom-dropdown">
+      <div class="dropdown-toggle" id="dropdownToggle">Select Language</div>
+      <ul class="language-list" id="languageList">
+        <li data-lang="en">English</li>
+        <li data-lang="hi">Hindi</li>
+        <li data-lang="te">Telugu</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('dropdownToggle');
+    const list = document.getElementById('languageList');
+    const items = document.querySelectorAll('#languageList li');
+
+    toggle.addEventListener('click', () => {
+      list.classList.toggle('open');
+    });
+
+    items.forEach(item => {
+      item.addEventListener('click', () => {
+        const selectedLang = item.getAttribute('data-lang');
+        toggle.textContent = item.textContent;
+        list.classList.remove('open');
+        console.log(`Selected language: ${selectedLang}`);
+        // Trigger language change logic here
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!toggle.contains(e.target) && !list.contains(e.target)) {
+        list.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>
