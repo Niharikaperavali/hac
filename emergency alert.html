@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Emergency Alert</title>
+<style>
+  body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #e8f4f1;
+  }
+  .container {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    text-align: center;
+  }
+  .warning-image {
+    width: 100px;
+    margin-bottom: 10px;
+  }
+  .sos-button {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://www.shutterstock.com/image-vector/red-warning-light-police-ambulance-600w-1677415405.jpg" alt="Warning Light" class="warning-image">
+    <h2>Emergency Alerts</h2>
+    <p>press the button</p>
+    <button class="sos-button" id="sosButton">SOS</button>
+    <audio id="sosAudio" src="C:\Users\Admin\Desktop\hac\Siren Ambulance Australian - QuickSounds.com.mp3"></audio>
+  </div>
+
+  <script>
+    document.getElementById('sosButton').addEventListener('click', function() {
+      const audio = document.getElementById('sosAudio');
+      audio.play();
+    });
+  </script>
+</body>
+</html>
