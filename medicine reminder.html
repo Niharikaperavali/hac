@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medicine Reminder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background:#e8f4f1; /* Updated background to a lighter green */
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .reminder-card {
+            background: #e6f6ee;
+            border-radius: 18px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            padding: 36px 32px 28px 32px;
+            min-width: 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .icon {
+            background: #fff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .icon img {
+            width: 40px;
+            height: 40px;
+        }
+        h2 {
+            margin: 0 0 18px 0;
+            color: #236653;
+            font-weight: 600;
+        }
+        .time-select {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .time-select select {
+            padding: 5px 8px;
+            border-radius: 6px;
+            border: 1px solid #b6d6ca;
+            background: #fff;
+            font-size: 16px;
+        }
+        .days {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            width: 100%;
+        }
+        .days label {
+            font-size: 14px;
+            color: #236653;
+            user-select: none;
+        }
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 22px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2e8b57;
+        }
+        input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+        hr {
+            margin: 18px 0 16px 0;
+            border: none;
+            border-top: 1px solid #cbe7db;
+            width: 100%;
+        }
+        button {
+            width: 100%;
+            padding: 12px 0;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #236653;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:active {
+            background: #1d4f3d;
+        }
+        .test-btn {
+            background: #3a3a3a;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="reminder-card">
+            <div class="icon">
+                <img src="https://img.icons8.com/ios-filled/50/clock--v1.png" alt="Clock Icon" />
+            </div>
+            <h2>Medicine Reminder</h2>
+            <form id="reminderForm" autocomplete="off" onsubmit="return false;">
+                <div class="time-select">
+                    <select id="hour"></select>
+                    :
+                    <select id="minute"></select>
+                    <select id="ampm">
+                        <option>AM</option>
+                        <option>PM</option>
+                    </select>
+                </div>
+                <div class="days">
+                    <label><input type="checkbox" value="Sun">Sun</label>
+                    <label><input type="checkbox" value="Mon">Mon</label>
+                    <label><input type="checkbox" value="Tue">Tue</label>
+                    <label><input type="checkbox" value="Wed">Wed</label>
+                    <label><input type="checkbox" value="Thu">Thu</label>
+                    <label><input type="checkbox" value="Fri">Fri</label>
+                    <label><input type="checkbox" value="Sat">Sat</label>
+                </div>
+                <div class="toggle-row">
+                    <label class="switch">
+                        <input type="checkbox" id="reminderToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <hr>
+                <button type="button" id="startReminder">Start Reminder</button>
+                <button type="button" id="testSound" class="test-btn">Test Sound</button>
+            </form>
+        </div>
+    </div>
+    <audio id="reminderSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
+    <script>
+        // Populate hour and minute dropdowns
+        window.onload = function() {
+            const hourSelect = document.getElementById('hour');
+            const minuteSelect = document.getElementById('minute');
+            for (let h = 1; h <= 12; h++) {
+                let opt = document.createElement('option');
+                opt.value = h < 10 ? '0' + h : h;
+                opt.text = h < 10 ? '0' + h : h;
+                hourSelect.appendChild(opt);
+            }
+            for (let m = 0; m < 60; m++) {
+                let opt = document.createElement('option');
+                opt.value = m < 10 ? '0' + m : m;
+                opt.text = m < 10 ? '0' + m : m;
+                minuteSelect.appendChild(opt);
+            }
+            // Set current time as default
+            let now = new Date();
+            let hour = now.getHours();
+            let ampm = hour >= 12 ? 'PM' : 'AM';
+            hour = hour % 12;
+            if (hour === 0) hour = 12;
+            hourSelect.value = hour < 10 ? '0' + hour : hour;
+            minuteSelect.value = now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes();
+            document.getElementById('ampm').value = ampm;
+        };
+
+        // Request notification permission
+        function requestNotificationPermission() {
+            if (Notification.permission !== 'granted') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('Notification permission granted.');
+                    } else {
+                        console.warn('Notification permission denied.');
+                    }
+                });
+            }
+        }
+
+        // Play test sound
+        document.getElementById('testSound').onclick = function() {
+            document.getElementById('reminderSound').play().catch(error => {
+                console.error("Playback failed:", error);
+                alert('Failed to play sound: ' + error.message);
+            });
+        };
+
+        // Reminder logic
+        let reminderInterval;
+        document.getElementById('startReminder').onclick = function() {
+            requestNotificationPermission(); // Request permission on start
+            clearInterval(reminderInterval);
+
+            if (!document.getElementById('reminderToggle').checked) {
+                alert('Reminder is turned off!');
+                return;
+            }
+
+            const hour = document.getElementById('hour').value;
+            const minute = document.getElementById('minute').value;
+            const ampm = document.getElementById('ampm').value;
+            const days = Array.from(document.querySelectorAll('.days input:checked')).map(cb => cb.value);
+
+            if (days.length === 0) {
+                alert('Please select at least one day.');
+                return;
+            }
+
+            reminderInterval = setInterval(() => {
+                const now = new Date();
+                let nowHour = now.getHours();
+                let nowMinute = now.getMinutes();
+                let nowAmpm = nowHour >= 12 ? 'PM' : 'AM';
+                let nowHour12 = nowHour % 12;
+                if (nowHour12 === 0) nowHour12 = 12;
+
+                const weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+                const today = weekdays[now.getDay()];
+
+                if (
+                    days.includes(today) &&
+                    (nowHour12 === parseInt(hour)) &&
+                    (nowMinute === parseInt(minute)) &&
+                    (nowAmpm === ampm)
+                ) {
+                    // Show notification
+                    new Notification('Medicine Reminder', {
+                        body: 'Time to take your medicine!',
+                        icon: 'https://img.icons8.com/ios-filled/50/clock--v1.png', // Optional icon
+                    }).onclick = function() {
+                        // Play sound when notification is clicked
+                        const audio = document.getElementById('reminderSound');
+                        audio.play().catch(error => {
+                            console.error("Playback failed:", error);
+                            alert('Failed to play sound: ' + error.message); // Alert about playback failure
+                        });
+                    };
+                }
+            }, 1000 * 30); // Check every 30 seconds
+
+            alert('Reminder started! Notifications are used to trigger the alarm.');
+        };
+    </script>
+</body>
+</html>

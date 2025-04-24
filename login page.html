@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Grameena Care Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #e8f4f1; /* Light green */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+
+    .container {
+      max-width: 400px;
+      width: 100%;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      background-color: white;
+    }
+
+    .logo-container {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 1rem auto;
+      border-radius: 50%;
+      border: 2px solid #008060;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: white;
+    }
+
+    .logo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Changed to cover to fill the circle */
+    }
+
+    h2 {
+      margin: 0;
+      color: #006a5c;
+      font-size: 24px;
+    }
+
+    h3 {
+      margin-top: 0.3rem;
+      color: #006a5c;
+      font-weight: normal;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin: 1rem 0 0.3rem;
+      font-weight: bold;
+      color: #006a5c;
+      font-size: 18px;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .input-group img {
+      width: 24px;
+      margin-right: 8px;
+    }
+
+    .input-group input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+    }
+
+    .button {
+      flex: 1;
+      padding: 0.75rem;
+      margin: 0 0.5rem;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .login-btn {
+      background-color: #006a5c;
+      color: #fff;
+    }
+
+    .logout-btn {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      color: #000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .button img {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- HEAD and style part remain unchanged -->
+<body>
+  <div class="container" id="loginContainer">
+    <div class="logo-container">
+      <img src="logo gar.jpg" alt="Grameena Care Logo" class="logo"
+           onerror="this.src='https://img.icons8.com/color/96/000000/heart-health.png'">
+    </div>
+
+    <h2>GRAMEENA CARE</h2>
+    <h3>Welcome to your Health portal</h3>
+
+    <!-- Form Fields -->
+    <label for="name">User</label>
+    <div class="input-group">
+      <img src="https://img.icons8.com/ios-filled/50/id-verified.png" alt="Name Icon">
+      <input type="text" id="name" placeholder="Enter your name">
+    </div>
+
+    <label for="mobile">Mobile Number</label>
+    <div class="input-group">
+      <img src="https://img.icons8.com/ios-glyphs/30/phone.png" alt="Phone Icon">
+      <input type="tel" id="mobile" placeholder="Enter your mobile number">
+    </div>
+
+    <label for="email">Email ID</label>
+    <div class="input-group">
+      <img src="https://img.icons8.com/ios-glyphs/30/email.png" alt="Email Icon">
+      <input type="email" id="email" placeholder="Enter Your Email ID">
+    </div>
+
+    <!-- Buttons -->
+    <div class="button-group">
+      <button class="button login-btn" onclick="login()">
+        <img src="https://th.bing.com/th/id/OIP.RAZJigrDViiKFJ6eIR1I0gHaHa?w=250" alt="Login Icon">
+        LOGIN
+      </button>
+      <button class="button logout-btn" onclick="logout()">
+        <img src="https://th.bing.com/th/id/OIP.XqgSq7PHcbZpiBfjhzpfFwHaHa?w=250" alt="Logout Icon">
+        LOGOUT
+      </button>
+    </div>
+  </div>
+
+ 
+
+  <script>
+    function login() {
+      const name = document.getElementById("name").value;
+      const mobile = document.getElementById("mobile").value;
+      const email = document.getElementById("email").value;
+  
+      if (!name || !mobile || !email) {
+        alert("Please fill all the fields.");
+        return;
+      }
+  
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+  
+      const mobilePattern = /^\d{10}$/;
+      if (!mobilePattern.test(mobile)) {
+        alert("Please enter a valid 10-digit mobile number.");
+        return;
+      }
+  
+      alert(`Welcome, ${name}! Redirecting to home page...`);
+      window.location.href = "home page.html";  // 👈 REDIRECT TO HOME PAGE
+    }
+  
+    function logout() {
+      document.getElementById("name").value = '';
+      document.getElementById("mobile").value = '';
+      document.getElementById("email").value = '';
+      alert("You have been logged out.");
+    }
+  </script>
+  
+</body>

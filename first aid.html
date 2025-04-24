@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>First Aid Assistant</title>
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background-color: #006400;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 24px;
+    font-weight: bold;
+    border-bottom: 3px solid #004d00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.language-selector {
+    font-size: 16px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #004d00;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 350px;
+    overflow: hidden;
+}
+
+.card-header {
+    text-align: center;
+    padding: 10px;
+}
+
+.card-header .icon-container {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 5px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5;
+}
+
+.card-header img {
+    max-width: 70%;
+    max-height: 70%;
+}
+
+.card-header h2 {
+    color: #006400;
+    margin: 0;
+    font-size: 20px;
+}
+
+.card-content {
+    background-color: #f0f8f0;
+    padding: 15px 20px;
+}
+
+.card-content ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.card-content li {
+    padding-left: 20px;
+    position: relative;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.card-content li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #006400;
+}
+
+.btn-container {
+    text-align: center;
+    padding: 15px 0;
+}
+
+.listen-btn {
+    background-color: #006400;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.listen-btn:hover {
+    background-color: #004d00;
+}
+
+.audio-status {
+    display: none;
+    text-align: center;
+    padding: 5px;
+    font-size: 14px;
+    color: #006400;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .card {
+        max-width: 100%;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+</style>
+</head>
+<body>
+  <div class="header">
+    <span>First Aid Assistant</span>
+    <select class="language-selector" id="language-select" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+      <option value="te">Telugu</option>
+    </select>
+  </div>
+  
+  <div class="container">
+    <!-- Snakebite Card -->
+    <div class="card" id="snakebite-card">
+      <div class="card-header">
+        <img src=" https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTR2HxcM4RwD8Z3befRjGNhmzHWv-ASUDFAfFvJbckjjr6OILcq0qpp61SRvwBQelQ0YCo&usqp=CAU" alt="Snakebite">
+        <h2>Snakebite</h2>
+      </div>
+      <div class="card-content">
+        <ul id="snakebite-instructions">
+          <li>Stay calm and remove any tight clothing.</li>
+          <li>Keep the bitten area still and below the level of the heart.</li>
+          <li>Seek medical help immediately.</li>
+        </ul>
+      </div>
+      <div class="btn-container">
+        <button class="listen-btn" onclick="speak('snakebite')">Listen to Instructions</button>
+        <div class="audio-status" id="snakebite-status">Playing audio...</div>
+      </div>
+    </div>
+    
+    <!-- Burn Injury Card -->
+    <div class="card" id="burn-card">
+      <div class="card-header">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFUYLaObHepUBhbRoF8ALr9iAnXDztPeSusg&s" alt="Burn Injury">
+        <h2>Burn Injury</h2>
+      </div>
+      <div class="card-content">
+        <ul id="burn-instructions">
+          <li>Immediately cool the burn with running cold water.</li>
+          <li>Cover the burn with a sterile bandage.</li>
+          <li>Do not apply creams or ointments.</li>
+        </ul>
+      </div>
+      <div class="btn-container">
+        <button class="listen-btn" onclick="speak('burn')">Listen to Instructions</button>
+        <div class="audio-status" id="burn-status">Playing audio...</div>
+      </div>
+    </div>
+    
+    <!-- Severe Bleeding Card -->
+    <div class="card" id="bleeding-card">
+      <div class="card-header">
+        <img src="https://img.freepik.com/premium-vector/blood-icon_861234-1778.jpg " alt="Severe Bleeding">
+        <h2>Severe Bleeding</h2>
+      </div>
+      <div class="card-content">
+        <ul id="bleeding-instructions">
+          <li>Apply direct pressure to the wound with a clean cloth.</li>
+          <li>Elevate the bleeding area if possible.</li>
+          <li>Seek immediate medical help if bleeding doesn't stop.</li>
+        </ul>
+      </div>
+      <div class="btn-container">
+        <button class="listen-btn" onclick="speak('bleeding')">Listen to Instructions</button>
+        <div class="audio-status" id="bleeding-status">Playing audio...</div>
+      </div>
+    </div>
+    
+    <!-- Bone Fracture Card -->
+    <div class="card" id="fracture-card">
+      <div class="card-header">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLtCbHyG6fDrNOCAN2bfIFRGzYOf7xAFp_Yw&s" alt="Fracture">
+        <h2>Bone Fracture</h2>
+      </div>
+      <div class="card-content">
+        <ul id="fracture-instructions">
+          <li>Immobilize the bone with a splint.</li>
+          <li>Apply a cold compress to reduce swelling.</li>
+          <li>Seek immediate medical help.</li>
+        </ul>
+      </div>
+      <div class="btn-container">
+        <button class="listen-btn" onclick="speak('fracture')">Listen to Instructions</button>
+        <div class="audio-status" id="fracture-status">Playing audio...</div>
+      </div>
+    </div>
+    
+    <!-- Choking Card -->
+    <div class="card" id="choking-card">
+      <div class="card-header">
+        <img src="https://img.freepik.com/premium-vector/shortness-breath-icon-vector-image-can-be-used-disorder_120816-320871.jpg" alt="Choking">
+        <h2>Choking</h2>
+      </div>
+      <div class="card-content">
+        <ul id="choking-instructions">
+          <li>Perform the Heimlich maneuver by standing behind the person.</li>
+          <li>Place a fist just above their navel and grab it with your other hand.</li>
+          <li>Pull inward and upward with quick thrusts until the object is dislodged.</li>
+        </ul>
+      </div>
+      <div class="btn-container">
+        <button class="listen-btn" onclick="speak('choking')">Listen to Instructions</button>
+        <div class="audio-status" id="choking-status">Playing audio...</div>
+      </div>
+    </div>
+    
+    <!-- Heat Stroke Card -->
+    <div class="card" id="heatstroke-card">
+      <div class="card-header">
+        <img src="https://s7d1.scene7.com/is/image/KeminIndustries/IMG-KANA-00530-1?$responsive$" alt="Heat Stroke">
+        <h2>Heat Stroke</h2>
+      </div>
+      <div class="card-content">
+        <ul id="heatstroke-instructions">
+          <li>Move the person to a cool, shaded area immediately.</li>
+          <li>Apply cool water to the skin and fan to promote cooling.</li>
+          <li>Give small sips of water if the person is conscious.</li>
+          <li>Call emergency services right away.</li>
+        </ul>
+      </div>
+      <div class="btn-container">
+        <button class="listen-btn" onclick="speak('heatstroke')">Listen to Instructions</button>
+        <div class="audio-status" id="heatstroke-status">Playing audio...</div>
+      </div>
+    </div>
+    
+    <!-- Cardiac Arrest Card -->
+    <div class="card" id="cardiac-card">
+      <div class="card-header">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWj5xbZQvkH5pxFXe_oFeLW77AkF4NSemABA&s" alt="Cardiac Arrest">
+        <h2>Cardiac Arrest</h2>
+      </div>
+      <div class="card-content">
+        <ul id="cardiac-instructions">
+          <li>Call emergency services immediately.</li>
+          <li>Begin CPR: Push hard and fast in the center of the chest (100-120 compressions per minute).</li>
+          <li>If available, use an AED (Automated External Defibrillator) following its instructions.</li>
+          <li>Continue CPR until professional help arrives.</li>
+        </ul>
+      </div>
+      <div class="btn-container">
+        <button class="listen-btn" onclick="speak('cardiac')">Listen to Instructions</button>
+        <div class="audio-status" id="cardiac-status">Playing audio...</div>
+      </div>
+    </div>
+    
+    <!-- Allergic Reaction Card -->
+    <div class="card" id="allergic-card">
+      <div class="card-header">
+        <img src="https://thumbs.dreamstime.com/z/allergic-reaction-stamp-label-round-grunge-sign-360682028.jpg" alt="Allergic Reaction">
+        <h2>Allergic Reaction</h2>
+      </div>
+      <div class="card-content">
+        <ul id="allergic-instructions">
+          <li>For severe reactions, use an epinephrine auto-injector (EpiPen) if available.</li>
+          <li>Call emergency services immediately.</li>
+          <li>Help the person stay calm and lie quietly on their back.</li>
+          <li>If there's vomiting or bleeding from the mouth, turn them on their side.</li>
+        </ul>
+      </div>
+      <div class="btn-container">
+        <button class="listen-btn" onclick="speak('allergic')">Listen to Instructions</button>
+        <div class="audio-status" id="allergic-status">Playing audio...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Translations for card content, button text, and audio instructions
+    const translations = {
+      en: {
+        title: "First Aid Assistant",
+        listen_btn: "Listen to Instructions",
+        audio_status: "Playing audio...",
+        snakebite: {
+          title: "Snakebite",
+          instructions: [
+            "Stay calm and remove any tight clothing.",
+            "Keep the bitten area still and below the level of the heart.",
+            "Seek medical help immediately."
+          ],
+          audio: "For a snakebite: Stay calm and remove any tight clothing. Keep the bitten area still and below the level of the heart. Seek medical help immediately. Do not cut the wound or attempt to suck out the venom."
+        },
+        burn: {
+          title: "Burn Injury",
+          instructions: [
+            "Immediately cool the burn with running cold water.",
+            "Cover the burn with a sterile bandage.",
+            "Do not apply creams or ointments."
+          ],
+          audio: "For a burn injury: Immediately cool the burn with running cold water for at least 10 minutes. Cover the burn with a sterile bandage or clean cloth. Do not apply creams, ointments, or butter to the burn. Seek medical attention for severe burns."
+        },
+        bleeding: {
+          title: "Severe Bleeding",
+          instructions: [
+            "Apply direct pressure to the wound with a clean cloth.",
+            "Elevate the bleeding area if possible.",
+            "Seek immediate medical help if bleeding doesn't stop."
+          ],
+          audio: "For severe bleeding: Apply direct pressure to the wound with a clean cloth or bandage. Elevate the bleeding area if possible. If blood soaks through, add more cloth without removing the original bandage. Seek immediate medical help if bleeding doesn't stop."
+        },
+        fracture: {
+          title: "Bone Fracture",
+          instructions: [
+            "Immobilize the bone with a splint.",
+            "Apply a cold compress to reduce swelling.",
+            "Seek immediate medical help."
+          ],
+          audio: "For a bone fracture: Immobilize the bone with a splint or padding. Apply a cold compress to reduce swelling but not directly on the skin. Don't move the person unless necessary. Seek immediate medical help for proper treatment."
+        },
+        choking: {
+          title: "Choking",
+          instructions: [
+            "Perform the Heimlich maneuver by standing behind the person.",
+            "Place a fist just above their navel and grab it with your other hand.",
+            "Pull inward and upward with quick thrusts until the object is dislodged."
+          ],
+          audio: "For a choking person: Stand behind them and place one foot slightly in front of the other for balance. Place your fist just above their navel, grab it with your other hand, and pull inward and upward with quick thrusts. Continue until the object is dislodged or emergency services arrive."
+        },
+        heatstroke: {
+          title: "Heat Stroke",
+          instructions: [
+            "Move the person to a cool, shaded area immediately.",
+            "Apply cool water to the skin and fan to promote cooling.",
+            "Give small sips of water if the person is conscious.",
+            "Call emergency services right away."
+          ],
+          audio: "For heat stroke: Move the person to a cool, shaded area immediately. Apply cool water to the skin and fan to promote cooling. Give small sips of water if the person is conscious. Call emergency services right away as heat stroke can be life-threatening."
+        },
+        cardiac: {
+          title: "Cardiac Arrest",
+          instructions: [
+            "Call emergency services immediately.",
+            "Begin CPR: Push hard and fast in the center of the chest (100-120 compressions per minute).",
+            "If available, use an AED (Automated External Defibrillator) following its instructions.",
+            "Continue CPR until professional help arrives."
+          ],
+          audio: "For cardiac arrest: Call emergency services immediately. Begin CPR by pushing hard and fast in the center of the chest at a rate of 100 to 120 compressions per minute. If available, use an AED following its instructions. Continue CPR until professional help arrives."
+        },
+        allergic: {
+          title: "Allergic Reaction",
+          instructions: [
+            "For severe reactions, use an epinephrine auto-injector (EpiPen) if available.",
+            "Call emergency services immediately.",
+            "Help the person stay calm and lie quietly on their back.",
+            "If there's vomiting or bleeding from the mouth, turn them on their side."
+          ],
+          audio: "For a severe allergic reaction: Use an epinephrine auto-injector if available. Call emergency services immediately. Help the person stay calm and lie quietly on their back. If there's vomiting or bleeding from the mouth, turn them on their side to prevent choking."
+        }
+      },
+      hi: {
+        title: "प्राथमिक चिकित्सा सहायक",
+        listen_btn: "निर्देश सुनें",
+        audio_status: "ऑडियो चल रहा है...",
+        snakebite: {
+          title: "सांप का काटना",
+          instructions: [
+            "शांत रहें और कोई भी तंग कपड़े हटाएं।",
+            "काटे गए क्षेत्र को स्थिर और दिल के स्तर से नीचे रखें।",
+            "तुरंत चिकित्सा सहायता लें।"
+          ],
+          audio: "सांप के काटने के लिए: शांत रहें और कोई भी तंग कपड़े हटाएं। काटे गए क्षेत्र को स्थिर और दिल के स्तर से नीचे रखें। तुरंत चिकित्सा सहायता लें। घाव को न काटें और जहर को चूसने की कोशिश न करें।"
+        },
+        burn: {
+          title: "जलने की चोट",
+          instructions: [
+            "जलने को तुरंत ठंडे बहते पानी से ठंडा करें।",
+            "जलने को बाँझ पट्टी से ढकें।",
+            "क्रीम या मलहम न लगाएं।"
+          ],
+          audio: "जलने की चोट के लिए: जलने को कम से कम 10 मिनट तक ठंडे बहते पानी से ठंडा करें। जलने को बाँझ पट्टी या साफ कपड़े से ढकें। क्रीम, मलहम या मक्खन न लगाएं। गंभीर जलन के लिए चिकित्सा सहायता लें।"
+        },
+        bleeding: {
+          title: "गंभीर रक्तस्राव",
+          instructions: [
+            "घाव पर साफ कपड़े से सीधा दबाव डालें।",
+            "यदि संभव हो तो रक्तस्राव वाले क्षेत्र को ऊपर उठाएं।",
+            "यदि रक्तस्राव न रुके तो तुरंत चिकित्सा सहायता लें।"
+          ],
+          audio: "गंभीर रक्तस्राव के लिए: घाव पर साफ कपड़े या पट्टी से सीधा दबाव डालें। यदि संभव हो तो रक्तस्राव वाले क्षेत्र को ऊपर उठाएं। यदि खून रिसता रहे, तो मूल पट्टी हटाए बिना और कपड़ा जोड़ें। यदि रक्तस्राव न रुके तो तुरंत चिकित्सा सहायता लें।"
+        },
+        fracture: {
+          title: "हड्डी टूटना",
+          instructions: [
+            "हड्डी को स्प्लिंट के साथ स्थिर करें।",
+            "सूजन कम करने के लिए ठंडा सेक लगाएं।",
+            "तुरंत चिकित्सा सहायता लें।"
+          ],
+          audio: "हड्डी टूटने के लिए: हड्डी को स्प्लिंट या पैडिंग के साथ स्थिर करें। सूजन कम करने के लिए ठंडा सेक लगाएं, लेकिन त्वचा पर सीधे नहीं। जरूरी न हो तो व्यक्ति को न हिलाएं। उचित उपचार के लिए तुरंत चिकित्सा सहायता लें।"
+        },
+        choking: {
+          title: "गला घुटना",
+          instructions: [
+            "व्यक्ति के पीछे खड़े होकर हेमलिक युक्ति करें।",
+            "उनके नाभि के ठीक ऊपर एक मुट्ठी रखें और दूसरा हाथ उससे पकड़ें।",
+            "जब तक वस्तु निकल न जाए, तेजी से अंदर और ऊपर की ओर झटके दें।"
+          ],
+          audio: "गला घुटने के लिए: उनके पीछे खड़े हों और संतुलन के लिए एक पैर को थोड़ा आगे रखें। उनकी नाभि के ठीक ऊपर मुट्ठी रखें, दूसरा हाथ उससे पकड़ें, और तेजी से अंदर और ऊपर की ओर झटके दें। जब तक वस्तु निकल न जाए या आपातकालीन सेवाएं न आएं, तब तक जारी रखें।"
+        },
+        heatstroke: {
+          title: "लू लगना",
+          instructions: [
+            "व्यक्ति को तुरंत ठंडी, छायादार जगह पर ले जाएं।",
+            "त्वचा पर ठंडा पानी लगाएं और ठंडक के लिए पंखा चलाएं।",
+            "यदि व्यक्ति होश में हो तो उसे थोड़ा-थोड़ा पानी पिलाएं।",
+            "तुरंत आपातकालीन सेवाओं को कॉल करें।"
+          ],
+          audio: "लू लगने के लिए: व्यक्ति को तुरंत ठंडी, छायादार जगह पर ले जाएं। त्वचा पर ठंडा पानी लगाएं और ठंडक के लिए पंखा चलाएं। यदि व्यक्ति होश में हो तो उसे थोड़ा-थोड़ा पानी पिलाएं। लू जानलेवा हो सकती है, इसलिए तुरंत आपातकालीन सेवाओं को कॉल करें।"
+        },
+        cardiac: {
+          title: "हृदय गति रुकना",
+          instructions: [
+            "तुरंत आपातकालीन सेवाओं को कॉल करें।",
+            "सीपीआर शुरू करें: छाती के केंद्र में तेज और जोर से दबाएं (प्रति मिनट 100-120 बार)।",
+            "यदि उपलब्ध हो, तो AED (स्वचालित बाह्य डिफाइब्रिलेटर) का उपयोग करें और इसके निर्देशों का पालन करें।",
+            "पेशेवर सहायता आने तक सीपीआर जारी रखें।"
+          ],
+          audio: "हृदय गति रुकने के लिए: तुरंत आपातकालीन सेवाओं को कॉल करें। सीपीआर शुरू करें, छाती के केंद्र में प्रति मिनट 100 से 120 बार की दर से तेज और जोर से दबाएं। यदि उपलब्ध हो, तो AED का उपयोग करें और इसके निर्देशों का पालन करें। पेशेवर सहायता आने तक सीपीआर जारी रखें।"
+        },
+        allergic: {
+          title: "एलर्जी प्रतिक्रिया",
+          instructions: [
+            "गंभीर प्रतिक्रियाओं के लिए, यदि उपलब्ध हो तो एपिनेफ्रिन ऑटो-इंजेक्टर (एपिपेन) का उपयोग करें।",
+            "तुरंत आपातकालीन सेवाओं को कॉल करें।",
+            "व्यक्ति को शांत रहने और पीठ के बल शांति से लेटने में मदद करें।",
+            "यदि मुंह से उल्टी या खून निकल रहा हो, तो उन्हें बगल में लेटाएं।"
+          ],
+          audio: "गंभीर एलर्जी प्रतिक्रिया के लिए: यदि उपलब्ध हो तो एपिनेफ्रिन ऑटो-इंजेक्टर का उपयोग करें। तुरंत आपातकालीन सेवाओं को कॉल करें। व्यक्ति को शांत रहने और पीठ के बल शांति से लेटने में मदद करें। यदि मुंह से उल्टी या खून निकल रहा हो, तो उन्हें गला घुटने से बचाने के लिए बगल में लेटाएं।"
+        }
+      },
+      te: {
+        title: "ప్రథమ చికిత్స సహాయకుడు",
+        listen_btn: "సూచనలను వినండి",
+        audio_status: "ఆడియో ప్లే అవుతోంది...",
+        snakebite: {
+          title: "పాము కాటు",
+          instructions: [
+            "ప్రశాంతంగా ఉండి, గట్టి దుస్తులను తొలగించండి.",
+            "కాటు వేసిన ప్రాంతాన్ని స్థిరంగా మరియు గుండె స్థాయి కంటే తక్కువగా ఉంచండి.",
+            "వెంటనే వైద్య సహాయం తీసుకోండి."
+          ],
+          audio: "పాము కాటు కోసం: ప్రశాంతంగా ఉండి, గట్టి దుస్తులను తొలగించండి. కాటు వేసిన ప్రాంతాన్ని స్థిరంగా మరియు గుండె స్థాయి కంటే తక్కువగా ఉంచండి. వెంటనే వైద్య సహాయం తీసుకోండి. గాయాన్ని కత్తిరించవద్దు లేదా విషాన్ని పీల్చే ప్రయత్నం చేయవద్దు."
+        },
+        burn: {
+          title: "కాలిన గాయం",
+          instructions: [
+            "కాలిన గాయాన్ని వెంటనే చల్లని నీటితో చల్లబరచండి.",
+            "కాలిన గాయాన్ని క్రిమిరహిత కట్టుతో కప్పండి.",
+            "క్రీములు లేదా ఆయింట్‌మెంట్లు రాయవద్దు."
+          ],
+          audio: "కాలిన గాయం కోసం: కాలిన గాయాన్ని కనీసం 10 నిమిషాల పాటు చల్లని నీటితో చల్లబరచండి. కాలిన గాయాన్ని క్రిమిరహిత కట్టు లేదా శుభ్రమైన గుడ్డతో కప్పండి. క్రీములు, ఆయింట్‌మెంట్లు లేదా వెన్న రాయవద్దు. తీవ్రమైన కాలిన గాయాల కోసం వైద్య సహాయం తీసుకోండి."
+        },
+        bleeding: {
+          title: "తీవ్ర రక్తస్రావం",
+          instructions: [
+            "శుభ్రమైన గుడ్డతో గాయంపై నేరుగా ఒత్తిడి చేయండి.",
+            "సాధ్యమైతే రక్తస్రావం ఉన్న ప్రాంతాన్ని ఎత్తండి.",
+            "రక్తస్రావం ఆగకపోతే వెంటనే వైద్య సహాయం తీసుకోండి."
+          ],
+          audio: "తీవ్ర రక్తస్రావం కోసం: శుభ్రమైన గుడ్డ లేదా కట్టుతో గాయంపై నేరుగా ఒత్తిడి చేయండి. సాధ్యమైతే రక్తస్రావం ఉన్న ప్రాంతాన్ని ఎత్తండి. రక్తం గుండా రాగలిగితే, మొదటి కట్టును తీసివేయకుండా మరిన్ని గుడ్డలను జోడించండి. రక్తస్రావం ఆగకపోతే వెంటనే వైద్య సహాయం తీసుకోండి."
+        },
+        fracture: {
+          title: "ఎముక విరగడం",
+          instructions: [
+            "ఎముకను స్ప్లింట్‌తో స్థిరంగా ఉంచండి.",
+            "వాపును తగ్గించడానికి చల్లని కంప్రెస్ ఉపయోగించండి.",
+            "వెంటనే వైద్య సహాయం తీసుకోండి."
+          ],
+          audio: "ఎముక విరగడం కోసం: ఎముకను స్ప్లింట్ లేదా ప్యాడింగ్‌తో స్థిరంగా ఉంచండి. వాపును తగ్గించడానికి చల్లని కంప్రెస్ ఉపయోగించండి, కానీ చర్మంపై నేరుగా కాదు. అవసరం లేకపోతే వ్యక్తిని కదల్చవద్దు. సరైన చికిత్స కోసం వెంటనే వైద్య సహాయం తీసుకోండి."
+        },
+        choking: {
+          title: "ఊపిరాడకపోవడం",
+          instructions: [
+            "వ్యక్తి వెనుక నిలబడి హెమ్లిచ్ మనూవర్ చేయండి.",
+            "వారి బొడ్డు పైన ఒక ముష్టిని ఉంచి, దానిని మరొక చేతితో పట్టుకోండి.",
+            "వస్తువు బయటకు వచ్చే వరకు వేగంగా లోపలికి మరియు పైకి జర్క్ చేయండి."
+          ],
+          audio: "ఊపిరాడకపోవడం కోసం: వారి వెనుక నిలబడి, సమతుల్యత కోసం ఒక పాదాన్ని కొద్దిగా ముందుకు ఉంచండి. వారి బొడ్డు పైన ముష్టిని ఉంచి, మరొక చేతితో దానిని పట్టుకోండి, మరియు వేగంగా లోపలికి మరియు పైకి జర్క్ చేయండి. వస్తువు బయటకు వచ్చే వరకు లేదా అత్యవసర సేవలు రాకముందు వరకు కొనసాగించండి."
+        },
+        heatstroke: {
+          title: "వడదెబ్బ",
+          instructions: [
+            "వ్యక్తిని వెంటనే చల్లని, నీడ ఉన్న ప్రాంతానికి తరలించండి.",
+            "చర్మంపై చల్లని నీరు పోసి, చల్లబరచడానికి ఫ్యాన్ ఉపయోగించండి.",
+            "వ్యక్తి స్పృహలో ఉంటే, చిన్న చిన్న నీటి సిప్‌లు ఇవ్వండి.",
+            "వెంటనే అత్యవసర సేవలను సంప్రదించండి."
+          ],
+          audio: "వడదెబ్బ కోసం: వ్యక్తిని వెంటనే చల్లని, నీడ ఉన్న ప్రాంతానికి తరలించండి. చర్మంపై చల్లని నీరు పోసి, చల్లబరచడానికి ఫ్యాన్ ఉపయోగించండి. వ్యక్తి స్పృహలో ఉంటే, చిన్న చిన్న నీటి సిప్‌లు ఇవ్వండి. వడదెబ్బ ప్రాణాంతకం కావచ్చు, కాబట్టి వెంటనే అత్యవసర సేవలను సంప్రదించండి."
+        },
+        cardiac: {
+          title: "గుండె ఆగిపోవడం",
+          instructions: [
+            "వెంటనే అత్యవసర సేవలను సంప్రదించండి.",
+            "సిపిఆర్ ప్రారంభించండి: ఛాతీ మధ్యలో నిమిషానికి 100-120 సార్లు వేగంగా మరియు గట్టిగా నొక్కండి.",
+            "ఒకవేళ అందుబాటులో ఉంటే, AED (ఆటోమేటెడ్ ఎక్స్‌టర్నల్ డిఫిబ్రిలేటర్) ఉపయోగించి, దాని సూచనలను అనుసరించండి.",
+            "వృత్తిపరమైన సహాయం వచ్చే వరకు సిపిఆర్ కొనసాగించండి."
+          ],
+          audio: "గుండె ఆగిపోవడం కోసం: వెంటనే అత్యవసర సేవలను సంప్రదించండి. సిపిఆర్ ప్రారంభించండి, ఛాతీ మధ్యలో నిమిషానికి 100 నుండి 120 సార్లు వేగంగా మరియు గట్టిగా నొక్కండి. ఒకవేళ అందుబాటులో ఉంటే, AED ఉపయోగించి, దాని సూచనలను అనుసరించండి. వృత్తిపరమైన సహాయం వచ్చే వరకు సిపిఆర్ కొనసాగించండి."
+        },
+        allergic: {
+          title: "అలెర్జీ ప్రతిచర్య",
+          instructions: [
+            "తీవ్రమైన ప్రతిచర్యల కోసం, ఒకవేళ అందుబాటులో ఉంటే, ఎపినెఫ్రిన్ ఆటో-ఇంజెక్టర్ (ఎపిపెన్) ఉపయోగించండి.",
+            "వెంటనే అత్యవసర సేవలను సంప్రదించండి.",
+            "వ్యక్తి ప్రశాంతంగా ఉండి, వెనుకవైపు నిశ్చలంగా పడుకోవడానికి సహాయం చేయండి.",
+            "నోటి నుండి వాంతి లేదా రక్తస్రావం ఉంటే, వారిని పక్కకు తిప్పండి."
+          ],
+          audio: "తీవ్రమైన అలెర్జీ ప్రతిచర్య కోసం: ఒకవేళ అందుబాటులో ఉంటే, ఎపినెఫ్రిన్ ఆటో-ఇంజెక్టర్ ఉపయోగించండి. వెంటనే అత్యవసర సేవలను సంప్రదించండి. వ్యక్తి ప్రశాంతంగా ఉండి, వెనుకవైపు నిశ్చలంగా పడుకోవడానికి సహాయం చేయండి. నోటి నుండి వాంతి లేదా రక్తస్రావం ఉంటే, ఊపిరాడకుండా ఉండటానికి వారిని పక్కకు తిప్పండి."
+        }
+      }
+    };
+
+    // Current language
+    let currentLanguage = 'en';
+
+    // Function to update page content based on language
+    function updateContent() {
+      const langData = translations[currentLanguage];
+      
+      // Update header title
+      document.querySelector('.header span').textContent = langData.title;
+      
+      // Update cards
+      const types = ['snakebite', 'burn', 'bleeding', 'fracture', 'choking', 'heatstroke', 'cardiac', 'allergic'];
+      types.forEach(type => {
+        const card = document.getElementById(`${type}-card`);
+        const instructionsList = document.getElementById(`${type}-instructions`);
+        const button = card.querySelector('.listen-btn');
+        const status = document.getElementById(`${type}-status`);
+        
+        // Update card title
+        card.querySelector('h2').textContent = langData[type].title;
+        
+        // Update instructions
+        instructionsList.innerHTML = langData[type].instructions.map(item => `<li>${item}</li>`).join('');
+        
+        // Update button text
+        button.textContent = langData.listen_btn;
+        
+        // Update audio status text
+        status.textContent = langData.audio_status;
+      });
+    }
+
+    // Function to change language
+    function changeLanguage() {
+      currentLanguage = document.getElementById('language-select').value;
+      updateContent();
+    }
+
+    // Speech synthesis function
+    function speak(type) {
+      // Check if browser supports speech synthesis
+      if (!('speechSynthesis' in window)) {
+        alert("Sorry, your browser doesn't support speech synthesis. Please try a different browser.");
+        return;
+      }
+      
+      // Show audio status
+      const statusElement = document.getElementById(`${type}-status`);
+      statusElement.style.display = "block";
+      
+      // Get instructions and language
+      const instructions = translations[currentLanguage][type].audio;
+      const langCode = currentLanguage === 'en' ? 'en-US' : currentLanguage === 'hi' ? 'hi-IN' : 'te-IN';
+      
+      // Create utterance
+      const utterance = new SpeechSynthesisUtterance(instructions);
+      utterance.lang = langCode;
+      utterance.rate = 0.9; // Slightly slower for clarity
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      
+      // End event
+      utterance.onend = function() {
+        statusElement.style.display = "none";
+      };
+      
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+      
+      // Speak
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Initialize content
+    updateContent();
+  </script>
+</body>
+</html>

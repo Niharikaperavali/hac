@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Health Education</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f8f5;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            width: 150px; /* Adjust size as needed */
+            height: 150px; /* Match width for a perfect circle */
+            border-radius: 50%; /* Makes the image circular */
+            object-fit: cover; /* Ensures the image fits well within the circle */
+        }
+        .logo h1 {
+            color: #1a7b6b;
+            margin-top: 10px;
+            font-size: 24px;
+        }
+        .health-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .health-card h2 {
+            color: #1a7b6b;
+            margin-top: 0;
+        }
+        .health-card p {
+            margin-top: 5px;
+        }
+        .language-selector {
+            margin-bottom: 15px;
+        }
+        .language-label {
+            display: block;
+            color: #1a7b6b;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #f6f0ff;
+            font-size: 18px;
+        }
+        .play-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            font-size: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .play-button img {
+            vertical-align: middle;
+            margin-right: 10px;
+            width: 24px;
+            height: 24px;
+        }
+        .audio-status {
+            text-align: center;
+            margin-top: 10px;
+            color: #1a7b6b;
+            font-style: italic;
+            min-height: 20px;
+        }
+        .next-button {
+            background-color: #1a9cb5;
+            color: white;
+            border: none;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .volume-slider {
+            width: 100%;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWdfAzuH9bULb_-AwuRozmm-uKNJtXyIGZwg&s" alt="Voice Health Education Logo">
+            <h1>Voice Health Education</h1>
+        </div>
+
+        <div class="health-tip-container" id="health-tips">
+            <!-- Health tips will be inserted here -->
+        </div>
+
+        <div class="health-card">
+            <div class="language-selector">
+                <label class="language-label">Language</label>
+                <select id="language-select" onchange="changeLanguage()">
+                    <option value="english">English</option>
+                    <option value="telugu">తెలుగు</option>
+                    <option value="spanish">Español</option>
+                    <option value="french">Français</option>
+                    <option value="hindi">हिन्दी</option>
+                    <option value="chinese">中文</option>
+                </select>
+            </div>
+            
+            <label for="volume-control" class="language-label">Volume</label>
+            <input type="range" id="volume-control" class="volume-slider" min="0" max="1" step="0.1" value="0.5">
+            
+            <button class="play-button" onclick="playAudio()">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo79smRzKE1CTnHltZ_Q416BTZP1B8RPqa0i8QjHGh0da9TjVY2Oc2CJsBJMqY_H4z6FE&usqp=CAU" alt="audio icon"> Play Audio
+            </button>
+            
+            <div class="audio-status" id="audio-status"></div>
+            
+            <button class="next-button" onclick="nextTip()">
+                Next Health Tip
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Health tips data with multi-language support
+        const healthTips = [
+            {
+                english: {
+                    title: "Clean Drinking Water",
+                    content: "Drink only clean, filtered water to avoid stomach infections."
+                },
+                telugu: {
+                    title: "శుభ్రమైన తాగునీరు",
+                    content: "కడుపు అంటువ్యాధులను నివారించడానికి శుభ్రమైన, వడకట్టిన నీటిని మాత్రమే తాగండి."
+                },
+                spanish: {
+                    title: "Agua Potable Limpia",
+                    content: "Beba solo agua limpia y filtrada para evitar infecciones estomacales."
+                },
+                french: {
+                    title: "Eau Potable Propre",
+                    content: "Buvez uniquement de l'eau propre et filtrée pour éviter les infections d'estomac."
+                },
+                hindi: {
+                    title: "स्वच्छ पेयजल",
+                    content: "पेट के संक्रमण से बचने के लिए केवल साफ, फ़िल्टर किया हुआ पानी पिएं।"
+                },
+                chinese: {
+                    title: "干净的饮用水",
+                    content: "只喝干净、过滤的水以避免胃部感染。"
+                }
+            },
+            {
+                english: {
+                    title: "Regular Hand Washing",
+                    content: "Wash your hands with soap for at least 20 seconds to prevent infections."
+                },
+                telugu: {
+                    title: "క్రమంగా చేతులు కడుక్కోవడం",
+                    content: "అంటువ్యాధులను నివారించడానికి సబ్బుతో కనీసం 20 సెకన్లు చేతులు కడుక్కోండి."
+                },
+                spanish: {
+                    title: "Lavado Regular de Manos",
+                    content: "Lávese las manos con jabón durante al menos 20 segundos para prevenir infecciones."
+                },
+                french: {
+                    title: "Lavage Régulier des Mains",
+                    content: "Lavez-vous les mains avec du savon pendant au moins 20 secondes pour prévenir les infections."
+                },
+                hindi: {
+                    title: "नियमित हाथ धोना",
+                    content: "संक्रमण को रोकने के लिए अपने हाथों को कम से कम 20 सेकंड तक साबुन से धोएं।"
+                },
+                chinese: {
+                    title: "定期洗手",
+                    content: "用肥皂洗手至少20秒钟以预防感染。"
+                }
+            },
+            {
+                english: {
+                    title: "Balanced Diet",
+                    content: "Eat plenty of fruits, vegetables, and whole grains for better health."
+                },
+                telugu: {
+                    title: "సమతుల్య ఆహారం",
+                    content: "మెరుగైన ఆరోగ్యం కోసం పుష్కలంగా పండ్లు, కూరగాయలు మరియు పూర్తి ధాన్యాలను తినండి."
+                },
+                spanish: {
+                    title: "Dieta Equilibrada",
+                    content: "Coma muchas frutas, verduras y granos integrales para una mejor salud."
+                },
+                french: {
+                    title: "Alimentation Équilibrée",
+                    content: "Mangez beaucoup de fruits, de légumes et de grains entiers pour une meilleure santé."
+                },
+                hindi: {
+                    title: "संतुलित आहार",
+                    content: "बेहतर स्वास्थ्य के लिए खूब फल, सब्जियां और साबुत अनाज खाएं।"
+                },
+                chinese: {
+                    title: "均衡饮食",
+                    content: "多吃水果、蔬菜和全谷物以获得更好的健康。"
+                }
+            },
+            {
+                english: {
+                    title: "Physical Activity",
+                    content: "Exercise for at least 30 minutes daily to maintain good health."
+                },
+                telugu: {
+                    title: "శారీరక కార్యకలాపం",
+                    content: "మంచి ఆరోగ్యాన్ని కాపాడుకోవడానికి రోజూ కనీసం 30 నిమిషాలు వ్యాయామం చేయండి."
+                },
+                spanish: {
+                    title: "Actividad Física",
+                    content: "Haga ejercicio durante al menos 30 minutos diarios para mantener una buena salud."
+                },
+                french: {
+                    title: "Activité Physique",
+                    content: "Faites de l'exercice pendant au moins 30 minutes par jour pour maintenir une bonne santé."
+                },
+                hindi: {
+                    title: "शारीरिक गतिविधि",
+                    content: "अच्छे स्वास्थ्य को बनाए रखने के लिए रोजाना कम से कम 30 मिनट व्यायाम करें।"
+                },
+                chinese: {
+                    title: "身体活动",
+                    content: "每天至少锻炼30分钟以保持良好的健康。"
+                }
+            },
+            {
+                english: {
+                    title: "Adequate Sleep",
+                    content: "Get 7-8 hours of sleep daily for proper rest and recovery."
+                },
+                telugu: {
+                    title: "సరైన నిద్ర",
+                    content: "సరైన విశ్రాంతి మరియు కోలుకోవడానికి రోజూ 7-8 గంటలు నిద్రపోండి."
+                },
+                spanish: {
+                    title: "Sueño Adecuado",
+                    content: "Duerma de 7 a 8 horas diarias para un descanso y recuperación adecuados."
+                },
+                french: {
+                    title: "Sommeil Adéquat",
+                    content: "Dormez 7 à 8 heures par jour pour un repos et une récupération appropriés."
+                },
+                hindi: {
+                    title: "पर्याप्त नींद",
+                    content: "उचित आराम और रिकवरी के लिए रोजाना 7-8 घंटे की नींद लें।"
+                },
+                chinese: {
+                    title: "充足的睡眠",
+                    content: "每天睡眠7-8小时以获得适当的休息和恢复。"
+                }
+            }
+        ];
+
+        // Language code mapping for speech synthesis
+        const languageVoiceMappings = {
+            english: "en-US",
+            telugu: "te-IN",
+            spanish: "es-ES",
+            french: "fr-FR",
+            hindi: "hi-IN",
+            chinese: "zh-CN"
+        };
+
+        // Current tip index and language
+        let currentTipIndex = 0;
+        let currentLanguage = 'english';
+        let speechSynthesis = window.speechSynthesis;
+        let isSpeaking = false;
+
+        // Function to display health tip
+        function displayHealthTip() {
+            const tipContainer = document.getElementById('health-tips');
+            tipContainer.innerHTML = ''; // Clear previous tip
+            
+            const tip = healthTips[currentTipIndex][currentLanguage];
+            const tipElement = document.createElement('div');
+            tipElement.className = 'health-card';
+            tipElement.innerHTML = `
+                <h2>${tip.title}</h2>
+                <p>${tip.content}</p>
+            `;
+            
+            tipContainer.appendChild(tipElement);
+        }
+
+        // Function to change language
+        function changeLanguage() {
+            currentLanguage = document.getElementById('language-select').value;
+            displayHealthTip();
+            document.getElementById('audio-status').textContent = '';
+            
+            // Stop any ongoing speech when language changes
+            if (isSpeaking) {
+                speechSynthesis.cancel();
+                isSpeaking = false;
+            }
+        }
+
+        // Function to play audio using Speech Synthesis
+        function playAudio() {
+            // Stop any ongoing speech
+            if (isSpeaking) {
+                speechSynthesis.cancel();
+                isSpeaking = false;
+                document.getElementById('audio-status').textContent = 'Audio stopped';
+                return;
+            }
+            
+            const tip = healthTips[currentTipIndex][currentLanguage];
+            const statusElement = document.getElementById('audio-status');
+            const text = `${tip.title}. ${tip.content}`;
+            
+            // Create speech synthesis utterance
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = languageVoiceMappings[currentLanguage];
+            utterance.volume = document.getElementById('volume-control').value;
+            
+            // Set event handlers
+            utterance.onstart = function() {
+                isSpeaking = true;
+                statusElement.textContent = 'Playing audio...';
+            };
+            
+            utterance.onend = function() {
+                isSpeaking = false;
+                statusElement.textContent = 'Audio completed';
+            };
+            
+            utterance.onerror = function() {
+                isSpeaking = false;
+                statusElement.textContent = 'Error playing audio';
+            };
+            
+            // Play the speech
+            speechSynthesis.speak(utterance);
+        }
+
+        // Function to move to next tip
+        function nextTip() {
+            // Stop any ongoing speech
+            if (isSpeaking) {
+                speechSynthesis.cancel();
+                isSpeaking = false;
+            }
+            
+            currentTipIndex = (currentTipIndex + 1) % healthTips.length;
+            displayHealthTip();
+            document.getElementById('audio-status').textContent = '';
+        }
+
+        // Display initial health tip
+        displayHealthTip();
+        
+        // Check if speech synthesis is available
+        if (!window.speechSynthesis) {
+            document.getElementById('audio-status').textContent = 'Speech synthesis not supported in this browser';
+            document.querySelector('.play-button').disabled = true;
+        }
+    </script>
+</body>
+</html>

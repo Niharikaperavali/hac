@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Symptom Checker</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background-color:#e8f4f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .container {
+      background-color:#E9F7F1;
+      padding: 30px 20px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      gap: 15px;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: white;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .logo img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #155e4d;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 2px solid #155e4d;
+      outline: none;
+      text-align: center;
+    }
+
+    .button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .voice-btn {
+      background-color: #4dbd8b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .next-btn {
+      background-color: #21784e;
+    }
+
+    .diagnosis-box {
+      width: 100%;
+      border: 2px solid #21784e;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: white;
+      text-align: center;
+    }
+
+    .diagnosis-box h2 {
+      font-size: 24px;
+      color: #21784e;
+      margin-bottom: 10px;
+    }
+    
+    .precautions-box {
+      width: 100%;
+      border: 2px solid #21784e;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: white;
+      margin-top: 15px;
+      text-align: left;
+    }
+    
+    .precautions-box h3 {
+      font-size: 18px;
+      color: #21784e;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    .precautions-box ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    
+    .precautions-box li {
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    @media (max-width: 360px) {
+      .container {
+        padding: 20px 15px;
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="https://tse3.mm.bing.net/th?id=OIP.wsoJKRymhqmioUerdmN3HwHaDn&pid=Api&P=0&h=180" alt="Logo">
+    </div>
+    <h1>Symptom Checker</h1>
+
+    <div class="input-container">
+      <input type="text" id="symptom-input" placeholder="Enter the symptoms">
+    </div>
+
+    <button class="button voice-btn" id="voice-btn">
+      <span class="mic-icon">🎤</span> Speak Symptom
+    </button>
+
+    <button class="button next-btn" id="next-btn">Next</button>
+
+    <div class="diagnosis-box">
+      <h2 id="diagnosis-text">Diagnosis</h2>
+    </div>
+    
+    <div class="precautions-box" id="precautions-box" style="display: none;">
+      <h3>Precautions:</h3>
+      <ul id="precautions-list">
+        <!-- Precautions will be added here -->
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const voiceBtn = document.getElementById('voice-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const inputField = document.getElementById('symptom-input');
+    const diagnosisText = document.getElementById('diagnosis-text');
+    const precautionsBox = document.getElementById('precautions-box');
+    const precautionsList = document.getElementById('precautions-list');
+
+    // Database of symptoms, diagnoses and precautions
+    const symptomsDatabase = {
+      'Common Cold': [
+        'Rest and stay hydrated',
+        'Avoid contact with other people',
+        'Use over-the-counter cold medications',
+        'Gargle with salt water for sore throat'
+      ],
+      'Cough & Fever': [
+        'Stay home and rest',
+        'Drink warm fluids like herbal tea',
+        'Use a humidifier',
+        'Consult a doctor if symptoms worsen'
+      ],
+      'Infection': [
+        'Complete the full course of prescribed antibiotics',
+        'Keep the infected area clean',
+        'Rest and drink plenty of fluids',
+        'Monitor for worsening symptoms'
+      ],
+      'Migraine': [
+        'Rest in a quiet, dark room',
+        'Apply cold compresses to your head',
+        'Stay hydrated and maintain regular meals',
+        'Avoid known triggers like certain foods or stress'
+      ],
+      'Stress': [
+        'Practice deep breathing and meditation',
+        'Exercise regularly',
+        'Maintain a healthy sleep schedule',
+        'Consider talking to a mental health professional'
+      ],
+      'Headache': [
+        'Get plenty of rest',
+        'Stay hydrated by drinking water',
+        'Avoid screen time before bed',
+        'Take a mild pain reliever if needed'
+      ],
+      'Stomach Pain': [
+        'Avoid spicy foods',
+        'Maintain your fluid levels',
+        'Avoid caffeine',
+        'Take an anti-inflammatory medication if needed'
+      ],
+      'Back Pain': [
+        'Rest and stay hydrated',
+        'Avoid heavy lifting',
+        'Stretch daily',
+        'Take an anti-inflammatory medication if needed'
+      ],
+      'Neck Pain': [
+        'Apply heat or cold to the affected area',
+        'Avoid heavy lifting',
+        'Practice good posture',
+        'Take an anti-inflammatory medication if needed'
+      ],
+      'Tooth Pain': [
+        'Rinse mouth thoroughly',
+        'Use dental floss to remove any food particles',
+        'Avoid smoking',
+        'Take an anti-inflammatory medication if needed'
+      ],
+      'Muscle Pain': [
+        'Rest the affected area',
+        'Apply ice to reduce inflammation',
+        'Stretch gently when pain subsides',
+        'Take an anti-inflammatory medication if needed'
+      ]
+    };
+
+    let recognition;
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = false;
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        inputField.value = transcript;
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+      };
+    }
+
+    voiceBtn.onclick = () => {
+      if (recognition) {
+        voiceBtn.textContent = 'Listening...';
+        recognition.start();
+        recognition.onend = () => {
+          voiceBtn.innerHTML = '<span class="mic-icon">🎤</span> Speak Symptom';
+        };
+      } else {
+        alert('Speech recognition not supported in this browser.');
+      }
+    };
+
+    function getDiagnosis(symptoms) {
+      // Simple mapping of symptoms to diagnoses
+      symptoms = symptoms.toLowerCase();
+      
+      if (symptoms.includes('headache') && symptoms.includes('tiredness')) {
+        return 'Migraine';
+      } else if (symptoms.includes('cough') && symptoms.includes('fever')) {
+        return 'Cough & Fever';
+      } else if (symptoms.includes('runny nose') || symptoms.includes('sneezing')) {
+        return 'Common Cold';
+      } else if (symptoms.includes('stomach') || symptoms.includes('abdomen')) {
+        return 'Stomach Pain';
+      } else if (symptoms.includes('back pain')) {
+        return 'Back Pain';
+      } else if (symptoms.includes('neck pain')) {
+        return 'Neck Pain';
+      } else if (symptoms.includes('tooth') || symptoms.includes('teeth')) {
+        return 'Tooth Pain';
+      } else if (symptoms.includes('muscle')) {
+        return 'Muscle Pain';
+      } else if (symptoms.includes('stress') || symptoms.includes('anxiety')) {
+        return 'Stress';
+      } else if (symptoms.includes('headache')) {
+        return 'Headache';
+      } else {
+        // Fallback to random diagnosis if no specific match
+        const possible = ['Common Cold', 'Cough & Fever', 'Infection', 'Migraine', 'Stress'];
+        return possible[Math.floor(Math.random() * possible.length)];
+      }
+    }
+
+    function showPrecautions(diagnosis) {
+      // Clear previous precautions
+      precautionsList.innerHTML = '';
+      
+      // Get precautions for the diagnosis
+      const precautions = symptomsDatabase[diagnosis];
+      
+      if (precautions && precautions.length > 0) {
+        // Add each precaution as a list item
+        precautions.forEach(precaution => {
+          const li = document.createElement('li');
+          li.textContent = precaution;
+          precautionsList.appendChild(li);
+        });
+        
+        // Show the precautions box
+        precautionsBox.style.display = 'block';
+      } else {
+        // If no precautions found, show a default message
+        const li = document.createElement('li');
+        li.textContent = 'Please consult a healthcare professional for appropriate precautions.';
+        precautionsList.appendChild(li);
+        precautionsBox.style.display = 'block';
+      }
+    }
+
+    nextBtn.onclick = () => {
+      const symptoms = inputField.value.trim();
+      if (!symptoms) {
+        alert('Please enter the symptoms.');
+        return;
+      }
+
+      diagnosisText.textContent = 'Processing...';
+      precautionsBox.style.display = 'none';
+
+      setTimeout(() => {
+        // Get diagnosis based on symptoms
+        const diagnosis = getDiagnosis(symptoms);
+        diagnosisText.textContent = diagnosis;
+        
+        // Show precautions for the diagnosis
+        showPrecautions(diagnosis);
+      }, 1500);
+    };
+  </script>
+</body>
+</html>
